@@ -1,1 +1,1 @@
-libtk8.6
+libgl1-mesa-glx
