@@ -3,3 +3,4 @@ langchain_community
 langchain
 huggingface_hub
 PyPDF2
+BeautifulSoup4
