@@ -4,5 +4,6 @@ langchain
 huggingface_hub
 PyPDF2
 BeautifulSoup4
-pandas
-openpyxl
+faiss-cpu
+altair
+tiktoken
