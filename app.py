@@ -3,7 +3,6 @@ from langchain_core.messages import AIMessage, HumanMessage
 from langchain_community.document_loaders import WebBaseLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter, CharacterTextSplitter
 from langchain_community.embeddings import HuggingFaceInferenceAPIEmbeddings
-from dotenv import load_dotenv
 from langchain_community.llms import HuggingFaceEndpoint
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 import os
@@ -13,9 +12,7 @@ from langchain_community.vectorstores.faiss import FAISS
 from PyPDF2 import PdfReader
 import time
 
-load_dotenv()
-
-HUGGINGFACEHUB_API_TOKEN = os.getenv('HUGGINFACE_HUB_TOKEN')
+HUGGINGFACEHUB_API_TOKEN = st.secrets["HUGGINGFACEHUB_API_TOKEN"]
 
 os.environ["HUGGINGFACEHUB_API_TOKEN"] = HUGGINGFACEHUB_API_TOKEN
 
