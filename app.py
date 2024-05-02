@@ -61,7 +61,7 @@ def get_vectorstore_from_pdfs(pdf_docs) :
 def get_context_retriever_chain(vector_store) :
     repo_id = "mistralai/Mistral-7B-Instruct-v0.2"
     llm = HuggingFaceEndpoint(
-        repo_id=repo_id, max_length=128, temperature=0.5, token=HUGGINGFACEHUB_API_TOKEN
+        repo_id=repo_id, max_length=128, temperature=0.2, token=HUGGINGFACEHUB_API_TOKEN
     ) 
 
     retriever = vector_store.as_retriever()
@@ -69,7 +69,7 @@ def get_context_retriever_chain(vector_store) :
     prompt = ChatPromptTemplate.from_messages([
         MessagesPlaceholder(variable_name="chat_history"),
         ("user", "{input}"),
-        #("user", "Given the above conversation, generate a search query to look up in order to get information relevant to the conversation")
+        ("user", "Given the above conversation, generate a search query to look up in order to get information relevant to the conversation")
     ])
 
     retriever_chain = create_history_aware_retriever(llm, retriever, prompt)
@@ -80,7 +80,7 @@ def get_conversatinal_rag_chain(retriever_chain) :
 
     repo_id = "mistralai/Mistral-7B-Instruct-v0.2"
     llm = HuggingFaceEndpoint(
-        repo_id=repo_id, max_length=128, temperature=0.5, token=HUGGINGFACEHUB_API_TOKEN
+        repo_id=repo_id, max_length=128, temperature=0.2, token=HUGGINGFACEHUB_API_TOKEN
     ) 
 
     prompt = ChatPromptTemplate.from_messages([
