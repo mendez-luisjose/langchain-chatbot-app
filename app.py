@@ -13,6 +13,7 @@ from PyPDF2 import PdfReader
 import time
 
 HUGGINGFACEHUB_API_TOKEN = st.secrets["HUGGINGFACEHUB_API_TOKEN"]
+GOOGLE_API_KEY = st.secrets('GOOGLE_API_KEY')
 
 os.environ["HUGGINGFACEHUB_API_TOKEN"] = HUGGINGFACEHUB_API_TOKEN
 
@@ -61,7 +62,7 @@ def get_vectorstore_from_pdfs(pdf_docs) :
 def get_context_retriever_chain(vector_store) :
     repo_id = "mistralai/Mistral-7B-Instruct-v0.2"
     llm = HuggingFaceEndpoint(
-        repo_id=repo_id, max_length=128, temperature=0.2, token=HUGGINGFACEHUB_API_TOKEN
+        repo_id=repo_id, max_length=128, temperature=0.5, token=HUGGINGFACEHUB_API_TOKEN
     ) 
 
     retriever = vector_store.as_retriever()
@@ -77,11 +78,7 @@ def get_context_retriever_chain(vector_store) :
     return retriever_chain
 
 def get_conversatinal_rag_chain(retriever_chain) :
-
-    repo_id = "mistralai/Mistral-7B-Instruct-v0.2"
-    llm = HuggingFaceEndpoint(
-        repo_id=repo_id, max_length=128, temperature=0.2, token=HUGGINGFACEHUB_API_TOKEN
-    ) 
+    llm = GoogleGenerativeAI(model="models/text-bison-001", google_api_key=GOOGLE_API_KEY)
 
     prompt = ChatPromptTemplate.from_messages([
       ("system", "Answer the user's questions based on the below context:\n\n{context}"),
@@ -102,20 +99,15 @@ def get_response(user_query) :
         "input": user_query
     })
 
-    #print(response)
-
-    #final_response = response["answer"].index(':')
-
-    #final_response = response["answer"][final_response+2:]
-
-    return response
+    final_response = response["answer"]
+    return final_response
 
 st.header("Chatbot with LangChain 🦜")
 st.markdown("<hr/>", unsafe_allow_html=True)
 
 with st.sidebar:
     st.sidebar.markdown('''
-        🧑🏻‍💻 `LangChain App with FAISS, HugginFace and Stream 🦜`
+        🧑🏻‍💻 `LangChain App with FAISS, HugginFace, GoogleGenerativeAI and Stream 🦜`
         ''')
 
     st.markdown("---------")
@@ -151,7 +143,6 @@ if option == "URL" :
 
             with st.chat_message("assistant") :
                 ai_response = get_response(user_query)
-                ai_response = ai_response["answer"]
                 message_placeholder = st.empty()
                 full_response = ""
                 # Simulate a streaming response with a slight delay
@@ -184,7 +175,6 @@ elif option == "PDFs" :
 
             with st.chat_message("assistant") :
                 ai_response = get_response(user_query)
-                ai_response = ai_response["answer"]
                 message_placeholder = st.empty()
                 full_response = ""
                 # Simulate a streaming response with a slight delay
