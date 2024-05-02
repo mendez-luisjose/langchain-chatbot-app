@@ -6,4 +6,5 @@ PyPDF2
 BeautifulSoup4
 faiss-cpu
 altair
+langchain-google-genai
 tiktoken
