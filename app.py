@@ -3,6 +3,7 @@ from langchain_core.messages import AIMessage, HumanMessage
 from langchain_community.document_loaders import WebBaseLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter, CharacterTextSplitter
 from langchain_community.embeddings import HuggingFaceInferenceAPIEmbeddings
+from dotenv import load_dotenv
 from langchain_community.llms import HuggingFaceEndpoint
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 import os
@@ -12,7 +13,9 @@ from langchain_community.vectorstores.faiss import FAISS
 from PyPDF2 import PdfReader
 import time
 
-HUGGINGFACEHUB_API_TOKEN = st.secrets["HUGGINGFACEHUB_API_TOKEN"]
+load_dotenv()
+
+HUGGINGFACEHUB_API_TOKEN = os.getenv('HUGGINFACE_HUB_TOKEN')
 
 os.environ["HUGGINGFACEHUB_API_TOKEN"] = HUGGINGFACEHUB_API_TOKEN
 
@@ -61,7 +64,7 @@ def get_vectorstore_from_pdfs(pdf_docs) :
 def get_context_retriever_chain(vector_store) :
     repo_id = "mistralai/Mistral-7B-Instruct-v0.2"
     llm = HuggingFaceEndpoint(
-        repo_id=repo_id, max_length=128, temperature=0.1, token=HUGGINGFACEHUB_API_TOKEN
+        repo_id=repo_id, max_length=128, temperature=0.5, token=HUGGINGFACEHUB_API_TOKEN
     ) 
 
     retriever = vector_store.as_retriever()
@@ -69,7 +72,7 @@ def get_context_retriever_chain(vector_store) :
     prompt = ChatPromptTemplate.from_messages([
         MessagesPlaceholder(variable_name="chat_history"),
         ("user", "{input}"),
-        ("user", "Given the above conversation, generate a search query to look up in order to get information relevant to the conversation")
+        #("user", "Given the above conversation, generate a search query to look up in order to get information relevant to the conversation")
     ])
 
     retriever_chain = create_history_aware_retriever(llm, retriever, prompt)
@@ -80,7 +83,7 @@ def get_conversatinal_rag_chain(retriever_chain) :
 
     repo_id = "mistralai/Mistral-7B-Instruct-v0.2"
     llm = HuggingFaceEndpoint(
-        repo_id=repo_id, max_length=128, temperature=0.1, token=HUGGINGFACEHUB_API_TOKEN
+        repo_id=repo_id, max_length=128, temperature=0.5, token=HUGGINGFACEHUB_API_TOKEN
     ) 
 
     prompt = ChatPromptTemplate.from_messages([
