@@ -7,6 +7,7 @@ from langchain_community.llms import HuggingFaceEndpoint
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 import os
 from langchain.chains import create_history_aware_retriever, create_retrieval_chain
+from langchain_google_genai import GoogleGenerativeAI 
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain_community.vectorstores.faiss import FAISS
 from PyPDF2 import PdfReader
