@@ -11,16 +11,19 @@ from langchain_google_genai import GoogleGenerativeAI
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain_community.vectorstores.faiss import FAISS
 from PyPDF2 import PdfReader
+from langchain_groq import ChatGroq
 import time
 
 HUGGINGFACEHUB_API_TOKEN = st.secrets["HUGGINGFACEHUB_API_TOKEN"]
 GOOGLE_API_KEY = st.secrets["GOOGLE_API_KEY"]
+GROQ_API_KEY = os.getenv('GROQ_API_KEY')
 
 os.environ["HUGGINGFACEHUB_API_TOKEN"] = HUGGINGFACEHUB_API_TOKEN
+os.environ["GROQ_API_KEY"] = GROQ_API_KEY
 
 
 if "chat_history" not in st.session_state :
-    st.session_state.chat_history = []
+    st.session_state.chat_history = [AIMessage(content="Hello! I'm a Chatbot assistant. Ask me anything about your Web Page URL or PDF Files."),]
 
 st.set_page_config(page_title="LangChain App 🦜", page_icon="🦜", layout="wide")
 
@@ -61,10 +64,14 @@ def get_vectorstore_from_pdfs(pdf_docs) :
     return vector_store
 
 def get_context_retriever_chain(vector_store) :
+    """
     repo_id = "mistralai/Mistral-7B-Instruct-v0.2"
     llm = HuggingFaceEndpoint(
         repo_id=repo_id, max_length=128, temperature=0.5, token=HUGGINGFACEHUB_API_TOKEN
     ) 
+    """
+
+    llm = GoogleGenerativeAI(model="models/text-bison-001", google_api_key=GOOGLE_API_KEY)
 
     retriever = vector_store.as_retriever()
 
@@ -79,7 +86,8 @@ def get_context_retriever_chain(vector_store) :
     return retriever_chain
 
 def get_conversatinal_rag_chain(retriever_chain) :
-    llm = GoogleGenerativeAI(model="models/text-bison-001", google_api_key=GOOGLE_API_KEY)
+    #llm = GoogleGenerativeAI(model="models/text-bison-001", google_api_key=GOOGLE_API_KEY)
+    llm = ChatGroq(model="llama3-8b-8192", temperature=0.3, api_key=GROQ_API_KEY)
 
     prompt = ChatPromptTemplate.from_messages([
       ("system", "Answer the user's questions based on the below context:\n\n{context}"),
@@ -121,10 +129,10 @@ with st.sidebar:
 for message in st.session_state.chat_history :
     if isinstance(message, HumanMessage) :
         with st.chat_message("user") :
-            st.write(message.content)
+            st.markdown(message.content)
     else :
         with st.chat_message("assistant") :
-            st.write(message.content)
+            st.markdown(message.content)
 
 if option == "URL" :
     website_url = st.sidebar.text_input("Website URL: ")
@@ -140,7 +148,7 @@ if option == "URL" :
             st.session_state.chat_history.append(HumanMessage(content=user_query))
 
             with st.chat_message("user") :
-                st.write(user_query)
+                st.markdown(user_query)
 
             with st.chat_message("assistant") :
                 ai_response = get_response(user_query)
@@ -172,7 +180,7 @@ elif option == "PDFs" :
             st.session_state.chat_history.append(HumanMessage(content=user_query))
         
             with st.chat_message("user") :
-                st.write(user_query)
+                st.markdown(user_query)
 
             with st.chat_message("assistant") :
                 ai_response = get_response(user_query)
