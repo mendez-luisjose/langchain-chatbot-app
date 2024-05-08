@@ -13,6 +13,12 @@ from langchain_community.vectorstores.faiss import FAISS
 from PyPDF2 import PdfReader
 from langchain_groq import ChatGroq
 import time
+from langchain_groq import ChatGroq
+from langchain_community.utilities import GoogleSearchAPIWrapper
+from langchain_core.tools import Tool
+from langchain import hub
+from langchain.agents import create_structured_chat_agent
+from langchain.agents import AgentExecutor
 
 HUGGINGFACEHUB_API_TOKEN = st.secrets["HUGGINGFACEHUB_API_TOKEN"]
 GOOGLE_API_KEY = st.secrets["GOOGLE_API_KEY"]
@@ -20,6 +26,8 @@ GROQ_API_KEY = st.secrets["GROQ_API_KEY"]
 
 os.environ["HUGGINGFACEHUB_API_TOKEN"] = HUGGINGFACEHUB_API_TOKEN
 os.environ["GROQ_API_KEY"] = GROQ_API_KEY
+os.environ["GOOGLE_CSE_ID"] = st.secrets['GOOGLE_CSE_ID']
+os.environ["GOOGLE_API_KEY"] = st.secrets['GOOGLE_SEARCH_API']
 
 
 if "chat_history" not in st.session_state :
@@ -64,14 +72,7 @@ def get_vectorstore_from_pdfs(pdf_docs) :
     return vector_store
 
 def get_context_retriever_chain(vector_store) :
-    """
-    repo_id = "mistralai/Mistral-7B-Instruct-v0.2"
-    llm = HuggingFaceEndpoint(
-        repo_id=repo_id, max_length=128, temperature=0.5, token=HUGGINGFACEHUB_API_TOKEN
-    ) 
-    """
-
-    llm = GoogleGenerativeAI(model="models/text-bison-001", google_api_key=GOOGLE_API_KEY)
+    llm = GoogleGenerativeAI(model="gemini-pro", google_api_key=GOOGLE_API_KEY)
 
     retriever = vector_store.as_retriever()
 
@@ -86,7 +87,6 @@ def get_context_retriever_chain(vector_store) :
     return retriever_chain
 
 def get_conversatinal_rag_chain(retriever_chain) :
-    #llm = GoogleGenerativeAI(model="models/text-bison-001", google_api_key=GOOGLE_API_KEY)
     llm = ChatGroq(model="llama3-8b-8192", temperature=0.3, api_key=GROQ_API_KEY)
 
     prompt = ChatPromptTemplate.from_messages([
@@ -111,12 +111,28 @@ def get_response(user_query) :
     final_response = response["answer"]
     return final_response
 
+def get_search_response(user_query) :
+    google_search = GoogleSearchAPIWrapper()
+    google_tool = Tool(
+        name="google-search",
+        description="Search Google for recent results.",
+        func=google_search.run
+    )
+
+    chat_model = ChatGroq(temperature=0, model_name="llama3-8b-8192", groq_api_key=GROQ_API_KEY)
+    prompt = hub.pull("hwchase17/structured-chat-agent")
+    agent=create_structured_chat_agent(chat_model, [google_tool], prompt)
+    agent_executor=AgentExecutor(agent=agent, tools=[google_tool], verbose=False, handle_parsing_errors=True, max_iterations=7)
+    result = agent_executor.invoke({"input": user_query})
+    result = result["output"]
+    return result
+
 st.header("Chatbot with LangChain 🦜")
 st.markdown("<hr/>", unsafe_allow_html=True)
 
 with st.sidebar:
     st.sidebar.markdown('''
-        🧑🏻‍💻 `LangChain App with FAISS, HugginFace, GoogleGenerativeAI and Stream 🦜`
+        🧑🏻‍💻 Created by [Luis Jose Mendez](https://github.com/mendez-luisjose)
         ''')
 
     st.markdown("---------")
@@ -124,7 +140,7 @@ with st.sidebar:
     st.subheader("Load the Chatbot with PDFs or URLs")
     st.markdown("---------")
     st.header("Settings ⚙️")
-    option = st.sidebar.radio("Options:", ["URL", "PDFs"], horizontal=True)
+    option = st.sidebar.radio("Options:", ["URL", "PDFs", "Search"], horizontal=True)
 
 for message in st.session_state.chat_history :
     if isinstance(message, HumanMessage) :
@@ -199,3 +215,29 @@ elif option == "PDFs" :
                 #st.markdown(ai_response)
 
             st.session_state.chat_history.append(AIMessage(content=ai_response))
+
+elif option == "Search" :
+    user_query = st.chat_input("Type your message here...")
+        
+    if user_query is not None and user_query != "":
+        st.session_state.chat_history.append(HumanMessage(content=user_query))
+    
+        with st.chat_message("user") :
+            st.markdown(user_query)
+
+        with st.chat_message("assistant") :
+            ai_response = get_search_response(user_query)
+            message_placeholder = st.empty()
+            full_response = ""
+            # Simulate a streaming response with a slight delay
+            for chunk in ai_response.split():
+                full_response += chunk + " "
+                time.sleep(0.05)
+
+                # Add a blinking cursor to simulate typing
+                message_placeholder.markdown(full_response + "▌")
+            
+            # Display the full response
+            message_placeholder.info(full_response)
+
+        st.session_state.chat_history.append(AIMessage(content=ai_response))
