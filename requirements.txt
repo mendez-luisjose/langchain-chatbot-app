@@ -9,3 +9,5 @@ altair
 langchain-google-genai
 tiktoken
 langchain-groq
+langchainhub
+google-api-python-client
