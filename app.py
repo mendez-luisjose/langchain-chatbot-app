@@ -19,6 +19,7 @@ from langchain_core.tools import Tool
 from langchain import hub
 from langchain.agents import create_structured_chat_agent
 from langchain.agents import AgentExecutor
+from langchain_core.output_parsers import StrOutputParser
 
 HUGGINGFACEHUB_API_TOKEN = st.secrets["HUGGINGFACEHUB_API_TOKEN"]
 GOOGLE_API_KEY = st.secrets["GOOGLE_API_KEY"]
@@ -127,6 +128,26 @@ def get_search_response(user_query) :
     result = result["output"]
     return result
 
+def get_chatbot_simple_response(user_query, chat_history ) :
+    template = """
+    You are a helpful assistant. Answer the following questions considering the history of the conversation:
+
+    Chat history: {chat_history}
+
+    User question: {user_question}
+    """
+
+    prompt = ChatPromptTemplate.from_template(template)
+
+    llm = ChatGroq(model="llama3-8b-8192", temperature=0.3, api_key=GROQ_API_KEY)
+
+    chain = prompt | llm | StrOutputParser()
+    
+    return chain.invoke({
+        "chat_history": chat_history,
+        "user_question": user_query,
+    })
+
 st.header("Chatbot with LangChain 🦜")
 st.markdown("<hr/>", unsafe_allow_html=True)
 
@@ -140,7 +161,7 @@ with st.sidebar:
     st.subheader("Load the Chatbot with PDFs or URLs")
     st.markdown("---------")
     st.header("Settings ⚙️")
-    option = st.sidebar.radio("Options:", ["URL", "PDFs", "Search"], horizontal=True)
+    option = st.sidebar.radio("Options:", ["URL", "PDFs", "Search", "Conversation"], horizontal=True)
 
 for message in st.session_state.chat_history :
     if isinstance(message, HumanMessage) :
@@ -227,6 +248,32 @@ elif option == "Search" :
 
         with st.chat_message("assistant") :
             ai_response = get_search_response(user_query)
+            message_placeholder = st.empty()
+            full_response = ""
+            # Simulate a streaming response with a slight delay
+            for chunk in ai_response.split():
+                full_response += chunk + " "
+                time.sleep(0.05)
+
+                # Add a blinking cursor to simulate typing
+                message_placeholder.markdown(full_response + "▌")
+            
+            # Display the full response
+            message_placeholder.info(full_response)
+
+        st.session_state.chat_history.append(AIMessage(content=ai_response))
+
+elif option == "Conversation" :
+    user_query = st.chat_input("Type your message here...")
+        
+    if user_query is not None and user_query != "":
+        st.session_state.chat_history.append(HumanMessage(content=user_query))
+    
+        with st.chat_message("user") :
+            st.markdown(user_query)
+
+        with st.chat_message("assistant") :
+            ai_response = get_chatbot_simple_response(user_query, st.session_state.chat_history)
             message_placeholder = st.empty()
             full_response = ""
             # Simulate a streaming response with a slight delay
