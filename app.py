@@ -13,7 +13,7 @@ from langchain_community.vectorstores.faiss import FAISS
 from PyPDF2 import PdfReader
 from langchain_groq import ChatGroq
 import time
-from langchain_community.utilities import GoogleSearchAPIWrapper
+from langchain_community.utilities import GoogleSearchAPIWrapper, WikipediaAPIWrapper
 from langchain_core.tools import Tool
 from langchain import hub
 from langchain.agents import create_structured_chat_agent
