@@ -20,7 +20,7 @@ from langchain import hub
 from langchain.agents import create_structured_chat_agent
 from langchain.agents import AgentExecutor
 from langchain_core.output_parsers import StrOutputParser
-from langchain.callbacks import StreamlitCallbackHandler
+from langchain_community.callbacks.streamlit import StreamlitCallbackHandler
 from langchain.chains import LLMMathChain
 from langchain_community.tools import DuckDuckGoSearchRun
 from langchain_community.document_loaders import CSVLoader
