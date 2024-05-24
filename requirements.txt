@@ -11,3 +11,6 @@ tiktoken
 langchain-groq
 langchainhub
 google-api-python-client
+httpx[http2]
+duckduckgo-search
+wikipedia
