@@ -16,3 +16,4 @@ duckduckgo-search
 wikipedia
 uuid
 pandas
+numexpr
