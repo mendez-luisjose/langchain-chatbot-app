@@ -35,9 +35,8 @@ os.environ["GROQ_API_KEY"] = GROQ_API_KEY
 os.environ["GOOGLE_CSE_ID"] = st.secrets['GOOGLE_CSE_ID']
 os.environ["GOOGLE_API_KEY"] = st.secrets['GOOGLE_SEARCH_API']
 
-
 if "chat_history" not in st.session_state :
-    st.session_state.chat_history = [AIMessage(content="Hello! I'm a Chatbot assistant. Ask me anything about your Web Page URL or PDF Files."),]
+    st.session_state.chat_history = [AIMessage(content="Hello! I'm a Chatbot assistant. Ask me anything about your Web Page URL, CSV or PDF Files."),]
 
 st.set_page_config(page_title="LangChain App 🦜", page_icon="🦜", layout="wide")
 
@@ -163,6 +162,7 @@ def get_search_response(user_query) :
         func=search.run,
         description="Useful for when you need to do a search on the internet to find information that another tool can't find. Be specific with your input or ask about something that is new and latest.",
     )
+    
     chat_model = ChatGroq(temperature=0, model_name="llama3-8b-8192", groq_api_key=GROQ_API_KEY)
     prompt = hub.pull("hwchase17/structured-chat-agent")
     agent=create_structured_chat_agent(chat_model, [google_tool, math_tool, search_tool, wikipedia_tool], prompt)
