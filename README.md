@@ -1,6 +1,6 @@
 # LangChain Agent App with Llama3, Groq, Streamlit, HugginFace and Gemini-Pro
 
-[![Hair Touch-Up App with Stable Diffusion, ControlNet and Streamlit](./touch_up_hair_app.png)](https://youtu.be/80StsWrfD8w?si=H5WiI5x1zpJ6CouO)
+[![LangChain Agent App with Llama3, Groq, Streamlit, HugginFace and Gemini-Pro](./touch_up_hair_app.png)](https://www.youtube.com/watch?v=A3YX0zpA-VM)
 
 ## LangChain Agent App with Llama3, Groq, Streamlit, HugginFace and Gemini-Pro
 
