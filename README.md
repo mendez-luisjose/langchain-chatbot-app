@@ -1,6 +1,6 @@
 # LangChain Agent App with Llama3, Groq, Streamlit, HugginFace and Gemini-Pro
 
-[![LangChain Agent App with Llama3, Groq, Streamlit, HugginFace and Gemini-Pro](./test.png)](https://www.youtube.com/watch?v=A3YX0zpA-VM)
+[![LangChain Agent App with Llama3, Groq, Streamlit, HugginFace and Gemini-Pro](./langchain_agent_preview.png)](https://www.youtube.com/watch?v=A3YX0zpA-VM)
 
 ## LangChain Agent App with Llama3, Groq, Streamlit, HugginFace and Gemini-Pro
 
