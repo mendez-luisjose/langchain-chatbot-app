@@ -194,7 +194,7 @@ def get_chatbot_simple_response(user_query, chat_history ) :
 
 st.header("Agent Chatbot with LangChain 🦜")
 st.write("Load the Chatbot with PDFs, CSV or URL and Asks Questions About it, or just Chat Normally with the A.I. and also you can Ask Questions using the Agent Tools like the Google Search Engine, Math Problems or Wikipedia Posts.")
-st.info("All the Different Options are Available in the Sidebar 🛠️")
+st.success("🛠️ All the Different Options are Available in the Sidebar")
 st.markdown("<hr/>", unsafe_allow_html=True)
 
 with st.sidebar:
@@ -203,8 +203,8 @@ with st.sidebar:
         ''')
 
     st.markdown("---------")
-    st.title("Agent with LangChain 🦜")
-    st.subheader("Load the Chatbot with PDFs, CSV or URL 📚")
+    st.title("🦜 Agent with LangChain")
+    st.subheader("📚 Load the Chatbot with PDFs, CSV or URL")
     st.markdown("---------")
 
     st.write(
@@ -213,9 +213,9 @@ with st.sidebar:
         """
     )
 
-    st.info("It Can be Selected Only One Option at Time ❗")
+    st.info("❗ It Can be Selected Only One Option at Time")
 
-    st.header("Settings ⚙️")
+    st.header("⚙️ Settings")
     option = st.multiselect("Options:", ["URL",  "PDFs", "CSV", "Tools", "Conversation"], default=["Conversation"], max_selections=1)
     if len(option) !=0 :
         option = option[0]
