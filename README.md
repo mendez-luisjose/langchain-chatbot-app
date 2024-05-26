@@ -12,7 +12,7 @@ The LangChain Agent has Tools like the Google Search Engine, Math Problems or Wi
 
 - App Preview: https://www.youtube.com/watch?v=A3YX0zpA-VM
 
-![](./touch_up_hair_app_preview.gif)
+![](./langchain_app_preview.gif)
 
 ## Connect
 - Linkedin: https://www.linkedin.com/in/luis-jose-mendez/
