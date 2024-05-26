@@ -192,7 +192,7 @@ def get_chatbot_simple_response(user_query, chat_history ) :
         "user_question": user_query,
     })
 
-st.header("Agent Chatbot with LangChain 🦜")
+st.header("🦜 Agent Chatbot with LangChain")
 st.write("Load the Chatbot with PDFs, CSV or URL and Asks Questions About it, or just Chat Normally with the A.I. and also you can Ask Questions using the Agent Tools like the Google Search Engine, Math Problems or Wikipedia Posts.")
 st.success("🛠️ All the Different Options are Available in the Sidebar")
 st.markdown("<hr/>", unsafe_allow_html=True)
