@@ -1,6 +1,6 @@
 # LangChain Agent App with Llama3, Groq, Streamlit, HugginFace and Gemini-Pro
 
-[![LangChain Agent App with Llama3, Groq, Streamlit, HugginFace and Gemini-Pro](./touch_up_hair_app.png)](https://www.youtube.com/watch?v=A3YX0zpA-VM)
+[![LangChain Agent App with Llama3, Groq, Streamlit, HugginFace and Gemini-Pro](./langchain_agent_preview.png)](https://www.youtube.com/watch?v=A3YX0zpA-VM)
 
 ## LangChain Agent App with Llama3, Groq, Streamlit, HugginFace and Gemini-Pro
 
@@ -10,7 +10,7 @@ The LangChain Agent has Tools like the Google Search Engine, Math Problems or Wi
 
 ## Preview
 
-- App Preview: https://www.youtube.com/watch?v=ROatPMiWqrE
+- App Preview: https://www.youtube.com/watch?v=A3YX0zpA-VM
 
 ![](./touch_up_hair_app_preview.gif)
 
